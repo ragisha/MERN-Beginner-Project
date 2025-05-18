@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  </head>
+  <body>
+    <script>
+        var goLocation = (loc) =>{
+          location=loc;
+        }
+      var addInter = function(sid,subid){
+  		var sid = $("#sid").val();
+      var subid=$("#subid").val();
+  			var data = {sid,subid};
+  			$.ajax({
+			    url : "/api/subject/inter",
+			    type: "POST",
+			    data : data,
+			    success: function(data, textStatus, jqXHR) {
+			    	if(data.result == "success"){
+              console
+			    		location = '/student';
+			    	}
+			    },
+			    error: function (jqXHR, textStatus, errorThrown){
+			    	alert("Unable to connect remote server..");
+			    }
+			});
+  		}
+      var addStaff = function(tid,sjtid){
+  		var tid = $("#tid").val();
+      var sjtid=$("#sjtid").val();
+  			var data = {tid,sjtid};
+  			$.ajax({
+			    url : "/api/subject/staff",
+			    type: "POST",
+			    data : data,
+			    success: function(data, textStatus, jqXHR) {
+			    	if(data.result == "success"){
+			    		location = '/teacher';
+			    	}
+			    },
+			    error: function (jqXHR, textStatus, errorThrown){
+			    	alert("Unable to connect remote server..");
+			    }
+			});
+  		}
+        var doDelete = (sid)=>{
+          
+        $.ajax({
+			    url : "/api/subject",
+			    type: "DELETE",
+			    data : {id:sid},
+			    success: function(data, textStatus, jqXHR) {
+			    	if(data.result == "success"){
+			    		location = '/subject';
+			    	}
+			    },
+			    error: function (jqXHR, textStatus, errorThrown){
+			    	alert("Unable to connect remote server..");
+			    }
+			});
+      }
+        doSearch = function(){
+          var searchText = $("#searchText").val();
+          var selectField = $("#select").val();
+          if(searchText == ""){
+            location = "/subject";
+          }else{
+            location = "/subject/search/"+selectField+"/"+searchText;
+          }
+        }
+      </script>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <button class="btn btn-outline-secondary" onclick="goLocation('/dashboard')">Dashboard</button> &nbsp; | &nbsp;
+    <button class="btn btn-outline-secondary" onclick="goLocation('/student')">Student</button> &nbsp; | &nbsp;
+    <button class="btn btn-outline-secondary" onclick="goLocation('/teacher')">Teacher</button> &nbsp; | &nbsp;
+    <button class="btn btn-outline-secondary" onclick="goLocation('/login')">Logout</button> &nbsp;
+    <hr>
+    <button class="btn btn-light" onclick="goLocation('/subject/add')">Add </button> &nbsp; | &nbsp;
+    <input id="searchText" type="text" name="" placeholder="search text"> &nbsp; | &nbsp;
+    <select id="select">
+      <option value="name">Name</option>
+    </select> &nbsp; | &nbsp;
+    <button class="btn btn-light" onclick="doSearch()">Search</button>
+    <div class="page-data">
+      <div class="data-table">
+            <table class="table table-warning table-striped" cellpadding="5" cellspacing="5">
+                <tr class="table table-info">
+                    <th>Subject Id</th>
+                    <th>Name</th>
+                    <th>Delete</th>
+                </tr>
+                  <% if(data.length){for(var i = 0;i < data.length;i++) { %>
+                    <tr>
+                        <td><%=data[i].id%></td>
+                        <td><%=data[i].name%></td>
+                        <td onclick="doDelete('<%=data[i].id%>')">Delete</td>
+                    </tr>
+                    <% }}else{ %>
+                    <tr>
+                       <td colspan="7">No subjects</td>
+                    </tr>
+                    <% } %> 
+            </table>
+        </div>
+    </div>
+    <hr>
+    <form>
+      <p>Student Subject</p>
+      <input id="sid" type="text" placeholder="Enter Student ID"> &nbsp; | &nbsp;
+      <input id="subid" type="text" placeholder="Enter Subject"> &nbsp; | &nbsp;
+      <button  onclick="addInter(sid,subid)">Student Subject</button> <br> <br>
+      <p>Teacher Subject</p>
+      <input id="tid" type="text" placeholder="Enter Teacher ID"> &nbsp; | &nbsp;
+      <input id="sjtid" type="text" placeholder="Enter Subject Code"> &nbsp; | &nbsp;
+      <button onclick="addStaff(tid,sjtid)">Teacher Subject</button>
+    </form>
+  </body>
+</html>

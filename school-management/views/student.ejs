@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  </head>
+  <body>
+    
+    <script>
+        var goLocation = (loc) =>{
+          location=loc;
+        }
+        var doDelete = (sid)=>{
+          
+        $.ajax({
+			    url : "/api/student",
+			    type: "DELETE",
+			    data : {id:sid},
+			    success: function(data, textStatus, jqXHR) {
+			    	if(data.result == "success"){
+			    		location = "/student";
+			    	}
+			    },
+			    error: function (jqXHR, textStatus, errorThrown){
+			    	alert("Unable to connect remote server..");
+			    }
+			});
+      }
+        var doEdit = (id)=>{
+          location='/student/edit/'+id;
+          $.ajax({
+                  url : '/student/edit'+id,
+                  type: 'GET',
+                  data: data,
+                  success: function(data) {      
+                      if(data.result == "success"){
+                          location = "/student";
+                      }
+                  },
+                  error: function (jqXHR, textStatus, errorThrown){
+                      alert("Unable to connect remote server..");
+                  }
+              });
+        }
+        doSearch = function(){
+          var searchText = $("#searchText").val();
+          var selectField = $("#select").val();
+          if(searchText == ""){
+            location = "/student";
+          }else{
+            location = "/student/search/"+selectField+"/"+searchText;
+          }
+        }
+        doSubject= function(id){
+          location='/student/course/'+id;
+          $.ajax({
+                  url : '/student/course'+id,
+                  type: 'GET',
+                  data: {id:id},
+                  success: function(data) {      
+                      if(data.result == "success"){
+                        document.getElementById("demo").innerHTML=data.result;
+                          location = "/student";
+                      }
+                  },
+                  error: function (jqXHR, textStatus, errorThrown){
+                      alert("Unable to connect remote server..");
+                  }
+              });
+              document.getElementById("demo").innerHTML=data.result;
+        }
+      </script>
+      <div class="bg">
+        
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <button class="btn btn-outline-secondary" onclick="goLocation('/dashboard')">Dashboard</button>&nbsp;|&nbsp;
+    <button class="btn btn-outline-secondary" onclick="goLocation('/teacher')">Teacher</button>&nbsp;|&nbsp;
+    <button class="btn btn-outline-secondary" onclick="goLocation('/subject')">Subject</button>&nbsp;|&nbsp;
+    <button class="btn btn-outline-secondary" onclick="goLocation('/login')">Logout</button>&nbsp;
+    <hr>
+    <button class="btn btn-light" onclick="goLocation('/student/add')">Add </button> &nbsp; | &nbsp;
+    <input id="searchText" type="text" name="" placeholder="search text"> &nbsp; | &nbsp;
+    <select id="select">
+      <option value="name">Name</option>
+      <option value="email">Email</option>
+      <option value="address">Address</option>
+      <option value="phone">Phone</option>
+      <option value="city">City</option>
+    </select> &nbsp; | &nbsp;
+    <button class="btn btn-light" onclick="doSearch()">Search</button><br/><br/>
+    <div class="page-data">
+      <div class="data-table">
+            <table class="table table-danger table-striped">
+                <tr class="table-info">
+                    <th>Student Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                  <% if(data.length){for(var i = 0;i < data.length;i++) { %>
+                    <tr>
+                        <td><%=data[i].id%></td>
+                        <td><%=data[i].name%></td>
+                        <td><%=data[i].email%></td>
+                        <td><%=data[i].phone%></td>
+                        <td onclick="doSubject('<%=data[i].id%>')">Subject</td>
+                        <td onclick="doEdit('<%=data[i].id%>')">Edit</td>
+                        <td onclick="doDelete('<%=data[i].id%>')">Delete</td>
+                    </tr>
+                    <% }}else{ %>
+                    <tr>
+                       <td colspan="7">No students</td>
+                    </tr>
+                    <% } %> 
+                    <input type="text" id="demo">
+            </table>
+        </div>
+    </div>
+  </div>
+  </body>
+</html>

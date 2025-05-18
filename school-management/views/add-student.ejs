@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <script>
+        var addStudent = function(){
+  		var name = $("#name").val();
+        var email = $("#email").val();
+        var phone = $("#phone").val();
+  			var data = {name,email,phone};
+            
+  			$.ajax({
+			    url : "/api/student",
+			    type: "POST",
+			    data : data,
+			    success: function(data, textStatus, jqXHR) {
+			    	if(data.result == "success"){
+                        console.log(data);
+			    		location = "/student";
+			    	}
+			    },
+			    error: function (jqXHR, textStatus, errorThrown){
+			    	alert("Unable to connect remote server..");
+			    }
+			});
+  		}
+    </script>
+    <h1><%= title %></h1>
+    <input id="name" type="" placeholder="Name" name=""> <br/><br/>
+    <input id="email" type="" placeholder="Email" name=""> <br/><br/>
+    <input id="phone" type="" placeholder="Phone" name=""> <br/><br/>
+    <input onclick="addStudent()" type="button" value="Add">
+  </body>
+</html>
